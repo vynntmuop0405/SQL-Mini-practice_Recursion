@@ -19,3 +19,18 @@ INSERT INTO Category (Category_id, Category_name, Parent_id) VALUES
 (10, 'Ultrabooks', 4),
 (11, 'Shirts', 5),
 (12, 'Dresses', 6);
+
+--- Truy vết nguồn gốc sản phẩm
+WITH Category_hierachy AS (
+--Anchor: Danh mục gốc
+	SELECT *, 0 AS Level
+	FROM Category
+	WHERE Parent_id IS NULL
+	UNION ALL
+--Recursive: Nối con
+	SELECT a.Category_id, a.Category_name, a.Parent_id, b.Level+1 AS Level
+	FROM Category a
+	JOIN Category_hierachy b ON a.Parent_id = b.Category_id
+)
+SELECT * FROM Category_hierachy
+ORDER BY Level, Category_id
